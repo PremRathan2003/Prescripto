@@ -52,6 +52,16 @@ const Footer = () => {
                                 premrathanaddanki7736@gmail.com
                             </a>
                         </li>
+                        <li>
+                            <a 
+                                href="https://www.linkedin.com/in/premrathan/" 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="hover:underline font-medium cursor-pointer text-gray-600 "
+                            >
+                                LinkedIn: premrathan
+                            </a>
+    </li>
                     </ul>
                 </div>
             </div>
