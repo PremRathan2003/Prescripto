@@ -1,78 +1,126 @@
-import React, { useContext } from 'react'
-import { assets } from '../assets/assets'
-import { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { AdminContext } from '../context/AdminContext'
-import axios, { Axios } from 'axios'
-import { toast } from 'react-toastify'
 import { DoctorContext } from '../context/DoctorContext'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+
+import adminBg from '../assets/admin-bg.jpg'
+import doctorBg from '../assets/doctor-bg.jpg'
+
+import { ShieldCheck, Stethoscope } from 'lucide-react'
 
 const Login = () => {
 
-    const [state, setState] = useState("Admin")
+  const [state, setState] = useState("Admin")
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+  const { setAToken, backendUrl } = useContext(AdminContext)
+  const { setDToken } = useContext(DoctorContext)
 
-    const { setAToken, backendUrl } = useContext(AdminContext)
-    const { setDToken } = useContext(DoctorContext)
+  const onSubmitHandler = async (event) => {
+    event.preventDefault()
 
-    const onSubmitHandler = async (event) => {
+    try {
+      if (state === 'Admin') {
+        const { data } = await axios.post(backendUrl + '/api/admin/login', { email, password });
 
-        event.preventDefault()
-
-        try {
-            if (state === 'Admin') {
-                const { data } = await axios.post(backendUrl + '/api/admin/login', { email, password });
-
-                if (data.success) {
-                    localStorage.setItem('aToken', data.token);
-                    setAToken(data.token);
-                    toast.success("Admin login successful");
-                } else {
-                    toast.error(data.message);
-                }
-
-            } else {
-                const { data } = await axios.post(backendUrl + '/api/doctor/login', { email, password });
-
-                if (data.success) {
-                    console.log("Doctor token:", data.token);
-
-                    localStorage.setItem('dToken', data.token);
-                    setDToken(data.token);
-                    toast.success("Doctor login successful");
-                } else {
-                    toast.error(data.message);
-                }
-            }
-
-        } catch (error) {
-
+        if (data.success) {
+          localStorage.setItem('aToken', data.token);
+          setAToken(data.token);
+          toast.success("Admin login successful");
+        } else {
+          toast.error(data.message);
         }
-    }
 
-    return (
-        <form onSubmit={onSubmitHandler} className='min-h-[80vh] flex items-center'>
-            <div className='flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl text-[#5E5E5E] text-sm shadow-lg'>
-                <p className='text-2xl font-semibold m-auto'><span className='text-[#5F6FFF]'>{state}</span> Login</p>
-                <div className='w-full'>
-                    <p>Email</p>
-                    <input onChange={(e) => setEmail(e.target.value)} value={email} className='border border-[#DADADA] rounded w-full p-2 mt-1' type="email" required />
-                </div>
-                <div className='w-full'>
-                    <p>Password</p>
-                    <input onChange={(e) => setPassword(e.target.value)} value={password} className='border border-[#DADADA] rounded w-full p-2 mt-1' type="password" required />
-                </div>
-                <button className='bg-[#5F6FFF] text-white text-base w-full py-2 rounded-md'>Login</button>
-                {
-                    state === "Admin" ?
-                        <p>Doctor Login? <span className='text-[#5F6FFF] underline cursor-pointer' onClick={() => setState('Doctor')}>Click here</span></p>
-                        :
-                        <p>Admin Login? <span className='text-[#5F6FFF] underline cursor-pointer' onClick={() => setState('Admin')}>Click here</span></p>
-                }
-            </div>
-        </form>
-    )
+      } else {
+        const { data } = await axios.post(backendUrl + '/api/doctor/login', { email, password });
+
+        if (data.success) {
+          localStorage.setItem('dToken', data.token);
+          setDToken(data.token);
+          toast.success("Doctor login successful");
+        } else {
+          toast.error(data.message);
+        }
+      }
+
+    } catch (error) {
+      toast.error("Login failed");
+    }
+  }
+
+  return (
+    <div
+      className="relative min-h-screen flex items-center justify-center bg-cover bg-center transition-all duration-700"
+      style={{
+        backgroundImage: `url(${state === 'Admin' ? adminBg : doctorBg})`
+      }}
+    >
+      {/* ✅ Dark overlay */}
+      <div className="bg-black/50 absolute inset-0"></div>
+
+      {/* ✅ Glass blur card */}
+      <form
+        onSubmit={onSubmitHandler}
+        className="relative z-10 flex flex-col gap-4 items-start p-8 min-w-[340px] sm:min-w-96 rounded-2xl text-[#5E5E5E] text-sm shadow-2xl bg-white/20 backdrop-blur-xl border border-white/30 transition-all duration-500"
+      >
+        <p className='text-2xl font-semibold m-auto flex items-center gap-2 text-white'>
+          {state === "Admin" ? <ShieldCheck /> : <Stethoscope />}
+          <span>{state} Login</span>
+        </p>
+
+        <div className='w-full'>
+          <p className="text-white">Email</p>
+          <input
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+            className='border border-white/40 bg-white/80 rounded w-full p-2 mt-1 focus:outline-none'
+            type="email"
+            required
+          />
+        </div>
+
+        <div className='w-full'>
+          <p className="text-white">Password</p>
+          <input
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            className='border border-white/40 bg-white/80 rounded w-full p-2 mt-1 focus:outline-none'
+            type="password"
+            required
+          />
+        </div>
+
+        <button className='bg-[#5F6FFF] hover:bg-[#4958ff] transition-all text-white text-base w-full py-2 rounded-md'>
+          Login
+        </button>
+
+        {
+          state === "Admin" ?
+            <p className="text-white">
+              Doctor Login?{' '}
+              <span
+                className='text-blue-300 underline cursor-pointer'
+                onClick={() => setState('Doctor')}
+              >
+                Click here
+              </span>
+            </p>
+            :
+            <p className="text-white">
+              Admin Login?{' '}
+              <span
+                className='text-blue-300 underline cursor-pointer'
+                onClick={() => setState('Admin')}
+              >
+                Click here
+              </span>
+            </p>
+        }
+      </form>
+    </div>
+  )
 }
 
 export default Login
