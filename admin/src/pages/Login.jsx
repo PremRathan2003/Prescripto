@@ -51,6 +51,7 @@ const Login = () => {
   }
 
   return (
+    
     <div
       className="relative min-h-screen flex items-center justify-center bg-cover bg-center transition-all duration-700"
       style={{
@@ -119,6 +120,21 @@ const Login = () => {
             </p>
         }
       </form>
+      <div className="absolute bottom-4 right-4 z-20 bg-black/60 backdrop-blur-md text-white text-xs p-4 rounded-xl shadow-lg border border-white/20 max-w-[220px]">
+  <p className="font-semibold mb-2 text-sm">Demo Credentials</p>
+
+  {state === "Admin" ? (
+    <>
+      <p><span className="font-medium">Admin Email:</span> admin@prescripto.com</p>
+      <p><span className="font-medium">Password:</span> qwerty123</p>
+    </>
+  ) : (
+    <>
+      <p><span className="font-medium">Doctor Email:</span> doctorname@prescripto.com</p>
+      <p><span className="font-medium">Password:</span> qwert123</p>
+    </>
+  )}
+</div>
     </div>
   )
 }
