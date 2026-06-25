@@ -16,7 +16,19 @@ connectCloudinary()
 //middlewares
 app.use(express.json())
 app.use(cors({
-    origin: ['https://prescripto-b2dg.vercel.app', 'https://prescripto-admin.vercel.app', 'http://localhost:5173', 'http://localhost:5174'],
+    origin: (origin, callback) => {
+        const allowed = [
+            'https://prescripto-b2dg.vercel.app',
+            'https://prescripto-admin.vercel.app',
+            'http://localhost:5173',
+            'http://localhost:5174'
+        ]
+        if (!origin || allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
+    },
     credentials: true
 }))
 
