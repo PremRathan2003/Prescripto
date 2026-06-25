@@ -15,7 +15,10 @@ connectCloudinary()
 
 //middlewares
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+    origin: ['https://prescripto-b2dg.vercel.app', 'https://prescripto-admin.vercel.app', 'http://localhost:5173', 'http://localhost:5174'],
+    credentials: true
+}))
 
 // api endpoint 
 app.use('/api/admin', adminRouter)
